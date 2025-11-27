@@ -10,6 +10,37 @@ interface AuthContextType {
   signOut: () => Promise<void>;
 }
 
+const sendNotification = async (
+  actionType: string,
+  email: string,
+  fullName?: string,
+  phone?: string,
+  message?: string,
+  userId?: string
+) => {
+  try {
+    const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send_user_notification`;
+
+    await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        action_type: actionType,
+        email,
+        full_name: fullName,
+        phone,
+        message,
+        user_id: userId,
+      }),
+    });
+  } catch (error) {
+    console.error('Error sending notification:', error);
+  }
+};
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -67,16 +98,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         full_name: fullName,
         phone,
       });
+
+      await supabase.from('user_logs').insert({
+        user_id: data.user.id,
+        action_type: 'signup',
+        email,
+        full_name: fullName,
+        phone,
+      });
+
+      await sendNotification('signup', email, fullName, phone, undefined, data.user.id);
     }
 
     return { error: null };
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error, data } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+
+    if (!error && data.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', data.user.id)
+        .maybeSingle();
+
+      await supabase.from('user_logs').insert({
+        user_id: data.user.id,
+        action_type: 'signin',
+        email,
+        full_name: profile?.full_name,
+      });
+
+      await sendNotification('signin', email, profile?.full_name, undefined, undefined, data.user.id);
+    }
 
     return { error };
   };

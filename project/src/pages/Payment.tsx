@@ -19,6 +19,37 @@ export default function Payment() {
     return null;
   }
 
+  const sendNotification = async (
+    actionType: string,
+    userEmail: string,
+    fullName?: string,
+    phone?: string,
+    messageText?: string,
+    userId?: string
+  ) => {
+    try {
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send_user_notification`;
+
+      await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          action_type: actionType,
+          email: userEmail,
+          full_name: fullName,
+          phone,
+          message: messageText,
+          user_id: userId,
+        }),
+      });
+    } catch (error) {
+      console.error('Error sending notification:', error);
+    }
+  };
+
   const handlePayment = async () => {
     setLoading(true);
 
@@ -30,6 +61,18 @@ export default function Payment() {
     });
 
     if (!error) {
+      const paymentDetails = `Pack: ${pack.name} (${pack.price}€)\nMéthode: ${paymentMethod === 'paypal' ? 'PayPal' : 'Virement bancaire'}`;
+
+      await supabase.from('user_logs').insert({
+        user_id: user.id,
+        action_type: 'payment',
+        email: user.email,
+        full_name: user.full_name,
+        message: paymentDetails,
+      });
+
+      await sendNotification('payment', user.email, user.full_name, undefined, paymentDetails, user.id);
+
       setShowConfirmation(true);
     }
 

@@ -11,6 +11,37 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const sendNotification = async (
+    actionType: string,
+    userEmail: string,
+    fullName?: string,
+    phone?: string,
+    messageText?: string,
+    userId?: string
+  ) => {
+    try {
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send_user_notification`;
+
+      await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          action_type: actionType,
+          email: userEmail,
+          full_name: fullName,
+          phone,
+          message: messageText,
+          user_id: userId,
+        }),
+      });
+    } catch (error) {
+      console.error('Error sending notification:', error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -25,6 +56,16 @@ export default function Contact() {
     });
 
     if (!error) {
+      await supabase.from('user_logs').insert({
+        user_id: user?.id || null,
+        action_type: 'contact',
+        email,
+        full_name: name,
+        message,
+      });
+
+      await sendNotification('contact', email, name, undefined, message, user?.id);
+
       setSuccess(true);
       setMessage('');
       setTimeout(() => setSuccess(false), 5000);
