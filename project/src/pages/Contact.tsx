@@ -34,16 +34,30 @@ export default function Contact() {
   };
 
   const voyantPhone = '+33612345678';
-  const voyantWhatsApp = '+33612345678';
-  const voyantEmail = 'voyant@voyance-etoilee.fr';
 
-  const whatsappMessage = encodeURIComponent(
-    `Bonjour, je souhaite consulter un voyant. ${user ? `Mon nom: ${user.full_name}` : ''}`
+  const whatsApp1 = '+33612345678';
+  const whatsApp2 = '+33787654321';
+  const email1 = 'voyant@voyance-etoilee.fr';
+  const email2 = 'support@voyance-etoilee.fr';
+
+  const whatsappMessage1 = encodeURIComponent(
+    `Bonjour, je souhaite consulter un voyant pour une consultation personnalisée. ${user ? `Mon nom: ${user.full_name}` : ''}`
   );
 
-  const gmailSubject = encodeURIComponent('Consultation Voyance');
-  const gmailBody = encodeURIComponent(
-    `Bonjour,\n\nJe souhaite prendre rendez-vous pour une consultation.\n\n${
+  const whatsappMessage2 = encodeURIComponent(
+    `Bonjour, je souhaite obtenir des informations sur vos services et packs. ${user ? `Mon nom: ${user.full_name}` : ''}`
+  );
+
+  const gmailSubject1 = encodeURIComponent('Demande de Consultation Voyance');
+  const gmailBody1 = encodeURIComponent(
+    `Bonjour,\n\nJe souhaite prendre rendez-vous pour une consultation de voyance.\n\n${
+      user ? `Nom: ${user.full_name}\nEmail: ${user.email}\n` : ''
+    }\nCordialement`
+  );
+
+  const gmailSubject2 = encodeURIComponent('Renseignements sur les Services');
+  const gmailBody2 = encodeURIComponent(
+    `Bonjour,\n\nJe souhaiterais obtenir plus d'informations sur vos services et tarifs.\n\n${
       user ? `Nom: ${user.full_name}\nEmail: ${user.email}\n` : ''
     }\nCordialement`
   );
@@ -64,46 +78,76 @@ export default function Contact() {
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
             <h2 className="text-3xl font-bold text-white mb-8">Contact Direct</h2>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
               <a
-                href={`https://wa.me/${voyantWhatsApp}?text=${whatsappMessage}`}
+                href={`https://wa.me/${whatsApp1}?text=${whatsappMessage1}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center space-x-4 bg-green-500 hover:bg-green-600 text-white p-6 rounded-xl transition shadow-lg hover:scale-105 transform"
+                className="flex items-center space-x-4 bg-green-500 hover:bg-green-600 text-white p-5 rounded-xl transition shadow-lg hover:scale-105 transform"
               >
-                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <MessageCircle className="w-7 h-7" />
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <MessageCircle className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold mb-1">WhatsApp</h3>
-                  <p className="text-green-100 text-sm">Discutez directement avec un voyant</p>
+                  <h3 className="text-lg font-semibold mb-1">WhatsApp - Consultation</h3>
+                  <p className="text-green-100 text-sm">Demande de consultation personnalisée</p>
                 </div>
               </a>
 
               <a
-                href={`https://mail.google.com/mail/?view=cm&fs=1&to=${voyantEmail}&su=${gmailSubject}&body=${gmailBody}`}
+                href={`https://wa.me/${whatsApp2}?text=${whatsappMessage2}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center space-x-4 bg-red-500 hover:bg-red-600 text-white p-6 rounded-xl transition shadow-lg hover:scale-105 transform"
+                className="flex items-center space-x-4 bg-green-600 hover:bg-green-700 text-white p-5 rounded-xl transition shadow-lg hover:scale-105 transform"
               >
-                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Mail className="w-7 h-7" />
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <MessageCircle className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold mb-1">Gmail</h3>
-                  <p className="text-red-100 text-sm">Envoyez un email pour prendre rendez-vous</p>
+                  <h3 className="text-lg font-semibold mb-1">WhatsApp - Informations</h3>
+                  <p className="text-green-100 text-sm">Renseignements sur nos services</p>
+                </div>
+              </a>
+
+              <a
+                href={`https://mail.google.com/mail/?view=cm&fs=1&to=${email1}&su=${gmailSubject1}&body=${gmailBody1}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-4 bg-red-500 hover:bg-red-600 text-white p-5 rounded-xl transition shadow-lg hover:scale-105 transform"
+              >
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold mb-1">Email - Consultation</h3>
+                  <p className="text-red-100 text-sm">Rendez-vous de voyance</p>
+                </div>
+              </a>
+
+              <a
+                href={`https://mail.google.com/mail/?view=cm&fs=1&to=${email2}&su=${gmailSubject2}&body=${gmailBody2}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-4 bg-red-600 hover:bg-red-700 text-white p-5 rounded-xl transition shadow-lg hover:scale-105 transform"
+              >
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold mb-1">Email - Support</h3>
+                  <p className="text-red-100 text-sm">Questions sur nos packs et tarifs</p>
                 </div>
               </a>
 
               <a
                 href={`tel:${voyantPhone}`}
-                className="flex items-center space-x-4 bg-amber-500 hover:bg-amber-600 text-white p-6 rounded-xl transition shadow-lg hover:scale-105 transform"
+                className="flex items-center space-x-4 bg-amber-500 hover:bg-amber-600 text-white p-5 rounded-xl transition shadow-lg hover:scale-105 transform"
               >
-                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Phone className="w-7 h-7" />
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold mb-1">Appel Direct</h3>
+                  <h3 className="text-lg font-semibold mb-1">Appel Direct</h3>
                   <p className="text-amber-100 text-sm mb-1">Service client disponible 7j/7</p>
                   <p className="text-white font-semibold">{voyantPhone}</p>
                 </div>
